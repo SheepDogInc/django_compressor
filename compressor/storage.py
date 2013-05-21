@@ -4,6 +4,8 @@ from os import path
 from datetime import datetime
 
 from django.core.files.storage import FileSystemStorage, get_storage_class
+from django.utils._os import abspathu
+from django.utils.encoding import force_unicode
 from django.utils.functional import LazyObject, SimpleLazyObject
 
 from compressor.conf import settings
@@ -69,6 +71,18 @@ class GzipCompressorFileStorage(CompressorFileStorage):
         out.writelines(open(self.path(filename), 'rb'))
         out.close()
         return filename
+
+
+class GAECompressorFileStorage(CompressorFileStorage):
+    """
+    Compressor file system storage for use on Google App Engine. It's defining
+    feature is that it allows the manifest file to be stored outside of the
+    static files folder (and hence, can be opened and read by the application).
+    """
+    def path(self, name):
+        base_path = force_unicode(self.location)
+        final_path = path.join(base_path, name)
+        return path.normpath(abspathu(final_path))
 
 
 class DefaultStorage(LazyObject):
