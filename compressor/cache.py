@@ -58,7 +58,10 @@ def get_offline_cachekey(source):
 
 
 def get_offline_manifest_filename():
-    output_dir = settings.COMPRESS_OUTPUT_DIR.strip('/')
+    if hasattr(settings, 'COMPRESS_MANIFEST_LOCATION'):
+        output_dir = settings.COMPRESS_MANIFEST_LOCATION
+    else:
+        output_dir = settings.COMPRESS_OUTPUT_DIR.strip('/')
     return os.path.join(output_dir, settings.COMPRESS_OFFLINE_MANIFEST)
 
 
